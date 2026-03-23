@@ -1,51 +1,57 @@
-# Portfolio Optimization
+# Stock Portfolio Optimization
 
-Mean-variance optimization identifies the minimum-risk stock allocation for a target return across a five-stock tech portfolio. Using Gurobi's quadratic programming solver, the model constructs the full efficient frontier and pinpoints optimal weights for any risk appetite. The target-return portfolio achieves a 0.18% daily return at 1.80% daily volatility (daily Sharpe: 0.1002) with 69.1% allocated to GOOG.
+A quadratic portfolio optimization project built in Python for a simulated retail bank's portfolio pricing department, developed to minimize daily risk while meeting a target return. The full business write-up is available in `reports/Portfolio_Report.pdf`.
 
 ## Overview
 
-This project applies Markowitz mean-variance optimization to support portfolio construction decisions for equity investors. Given a universe of five large-cap tech stocks — AAPL, AVGO, GOOG, META, and NVDA — the model finds the allocation that minimizes portfolio variance for any specified return target. Daily adjusted closing prices were sourced via `yfinance` for the full 2025 calendar year (Jan 1 – Dec 31). The efficient frontier is mapped across 100 return levels between the minimum and maximum achievable daily returns. Full methodology, assumptions, and interpretation are documented in `Portfolio_Report.pdf`.
+This project uses Gurobi optimization and an efficient frontier analysis to determine stock allocations across five equities `(AAPL, AVGO, GOOG, META, NVDA)` using 2025 daily closing prices from Yahoo Finance. Two analyses are presented: a constrained optimization that minimizes risk for a specific return target (≥ 0.18% daily), and an efficient frontier that surfaces alternative portfolios across the full risk-return spectrum for varying risk appetites.
 
-## Approach
+## Methodology
 
-- **Data**: Daily percent returns computed from adjusted closing prices (5 stocks, ~252 trading days, 2025)
-- **Optimizer**: Gurobi 13.0.1 quadratic program — minimizes portfolio variance subject to a fully-invested constraint (`weights sum = 1`) and a minimum return floor
-- **Efficient Frontier**: 100 constrained optimizations sweep the return range to trace the risk-return tradeoff curve
+- **Data** — Daily adjusted closing prices pulled via `yfinance` for Jan–Dec 2025; percent daily returns and a covariance matrix computed for portfolio risk modeling
+- **Constrained optimization** — Gurobi quadratic model minimizing portfolio variance subject to a budget constraint (weights sum to 1) and a fixed minimum daily return constraint (≥ 0.18%); produces the lowest-risk portfolio that meets the target return
+- **Efficient frontier** — Parametric sweep across return targets to trace the full risk-return frontier; three key portfolios identified to illustrate options for low, balanced, and high risk appetites
 
-## Results
+## Constrained Optimization Portfolio
+*Minimizes daily risk subject to a ≥ 0.18% daily return requirement*
 
-**Target-Return Portfolio** (minimum variance at daily return >= 0.18%)
+| Stock | Allocation |
+|---|---|
+| GOOG | 69.10% |
+| AAPL | 19.66% |
+| META | 8.77% |
+| AVGO | 2.47% |
+| NVDA | 0.00% |
 
-| Ticker | Weight |
-|--------|--------|
-| GOOG   | 69.10% |
-| AAPL   | 19.66% |
-| META   |  8.77% |
-| AVGO   |  2.47% |
-| NVDA   |  0.00% |
+## Efficient Frontier Portfolios
+*Explores the full risk-return trade-off — no fixed return target*
 
-| Metric                  | Value  |
-|-------------------------|--------|
-| Expected Daily Return   | 0.0018 |
-| Daily Volatility (SD)   | 0.0180 |
-| Daily Sharpe Ratio      | 0.1002 |
+| Portfolio | Daily Risk | Daily Return |
+|---|---|---|
+| Low Risk (Min Variance) | 1.7% | 0.14% |
+| Max Sharpe Ratio | 2.0% | 0.22% |
+| High Risk (Max Return) | 3.4% | 0.23% |
 
-**Efficient Frontier Endpoints**
+## Repository Structure
 
-|                          | Daily Return | Daily Volatility | Key Holding     |
-|--------------------------|-------------|-----------------|-----------------|
-| Low Risk (Min Variance)  | 0.0014      | 0.0172          | GOOG 43.4%, AAPL 37.5%, META 19.1% |
-| High Return (Max Return) | 0.0023      | 0.0336          | AVGO 100%       |
+```
+stock-portfolio-optimization/
+├── Optimization_Code.ipynb
+└── reports/
+    └── Portfolio_Report.pdf
+```
 
-## Files
+## Getting Started
 
-| File | Description |
-|------|-------------|
-| `Optimization_Code.ipynb` | Full implementation: data pull, optimization model, efficient frontier, and visualizations |
-| `Portfolio_Report.pdf` | Business report with methodology, assumptions, and result interpretation |
+```bash
+pip install gurobipy yfinance pandas numpy matplotlib
+jupyter notebook Optimization_Code.ipynb
+```
 
-## Requirements
+> **Note:** Gurobi requires a valid license. A free academic license is available at [gurobi.com](https://www.gurobi.com/academia/academic-program-and-licenses/).
 
-- `gurobipy` (Gurobi 13.0+, valid license required)
-- `yfinance`
-- `pandas`, `numpy`, `matplotlib`
+## Tools & Libraries
+
+![Python](https://img.shields.io/badge/Python-3.11+-blue)
+![Gurobi](https://img.shields.io/badge/Gurobi-quadratic%20optimization-red)
+![yfinance](https://img.shields.io/badge/yfinance-market%20data-green)
